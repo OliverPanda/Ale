@@ -31,9 +31,9 @@
         class="al-ransfer-panel__list">
         <al-checkbox
           class="al-ransfer-panel__item"
-          :label="item[keyProp]"
-          :disabled="item[disabledProp]"
-          :key="item[keyProp]"
+          :label="item.key"
+          :disabled="item.disabled"
+          :key="item.key"
           v-for="item in filteredData">
           <option-content :option="item"></option-content>
         </al-checkbox>
@@ -91,6 +91,14 @@ export default {
       checkChangeByUser: true,
       inputHover: false, // 搜索框有值并且鼠标移入时, 动态切换按钮
       filteredData: computed(() => {
+        return this.data.filter(item => {
+          if (typeof this.filterMethod === 'function') {
+            return this.filterMethod(this.query, item);
+          } else {
+            const label = item[this.labelProp] || item[this.keyProp].toString();
+            return label.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+          }
+        });
       }),
       inputIcon: computed(() => {
         return (
